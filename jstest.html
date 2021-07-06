@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- Icons CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <nav>
+      <div class="nav-wrapper indigo darken-2">
+        <a href="#" class="brand-logo" style="margin-left:20px;">
+          <i class="material-icons" style='font-size:30px;'>wb_sunny</i></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="sass.html">Sass</a></li>
+          <li><a href="badges.html">Components</a></li>
+          <li><a href="collapsible.html">JavaScript</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class='container'>
+      <input id = 'input'>
+      <button class= 'btn indigo darken-2 white-text'onclick='fillList()'>Add</button>
+      <div id = 'output' style = 'padding-top:10px;'> </div>
+    </div>
+  </body>
+
+  <script>
+    var mylist = []; //global variable
+    function fillList(){
+      var iHandle = document.getElementById('input'); // access input
+      var oHandle = document.getElementById('output'); // access output div
+      mylist.push(iHandle.value); // adds value to array
+
+      var myHTML = '<ul class="collection">';
+      for (i=0; i<mylist.length; i++){
+        myHTML = myHTML + "<li class='collection-item avatar'>" + mylist[i] + '</li>'
+      }
+      myHTML = myHTML + "</ul>";
+      oHandle.innerHTML = myHTML;
+      iHandle.value = "";
+    }
+  </script>
+</html>
