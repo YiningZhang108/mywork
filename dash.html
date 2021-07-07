@@ -7,6 +7,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <!-- Icons CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- get axios -->
+    <script src='https://unpkg.com/axios@0.21.1/dist/axios.min.js'></script>
   </head>
 
   <body>
@@ -28,9 +30,20 @@
       <div class="col s12 m6">
         <div class="card">
           <div class="card-content">
-            <span class="card-title">List</span>
-            <p>I am a very simple card. I am good at containing small bits of information.
-            I am convenient because I require little markup to use effectively.</p>
+            <span class="card-title" id = 'geo'></span>
+            <div id= 'weather'>
+              <div class="preloader-wrapper big active">
+  <div class="spinner-layer spinner-blue-only">
+    <div class="circle-clipper left">
+      <div class="circle"></div>
+    </div><div class="gap-patch">
+      <div class="circle"></div>
+    </div><div class="circle-clipper right">
+      <div class="circle"></div>
+    </div>
+  </div>
+</div>
+            </div>
           </div>
         </div>
       </div> <!-- end of first card -->
@@ -74,6 +87,32 @@
   </body>
 
   <script>
+
+    axios.get('https://ipapi.co/json/')
+      .then(response => {
+        console.log(response);
+        var lat = response.data.latitude;
+        var lon = response.data.longitude;
+        geoData(response.data);
+        var wstring = 'https://www.7timer.info/bin/civillight.php?lon='+lon+'&lat='+lat+'&unit=metric&output=json';
+        weatherData(wstring);
+      })
+
+
+    function geoData(response){
+      var gHandle = document.getElementById('geo');
+      gHandle.innerHTML = response.city;
+    }
+    function weatherData(wstring){
+      axios.get(wstring)
+        .then(response =>{
+          console.log(response);
+          var gHandle = document.getElementById('weather');
+          var myHTML = "Today's weather is " + response.data.dataseries[0].weather;
+          gHandle.innerHTML = myHTML
+        })
+    }
+
   </script>
 
 </html>
