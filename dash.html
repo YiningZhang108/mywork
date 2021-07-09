@@ -14,16 +14,21 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <!-- weather icons -->
     <link rel = 'stylesheet' href = 'https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css'>
+    <!-- ChartJS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
     <style>
       #wicon {
         padding: 5px;
         font-size: 40px;
       }
       .card {
-        height:300px;
+        height:400px;
       }
     </style>
+
   </head>
+
 
   <body>
     <nav>
@@ -45,6 +50,7 @@
         <div class="card">
           <div class="card-content">
             <span class="card-title" id = 'geo'></span>
+            <br>
             <div id= 'weather'>
               <div class="preloader-wrapper big active">
                   <div class="spinner-layer spinner-blue-only">
@@ -80,9 +86,8 @@
       <div class="col s12 m6">
         <div class="card">
           <div class="card-content">
-            <span class="card-title">Bar Graph</span>
-            <p>I am a very simple card. I am good at containing small bits of information.
-            I am convenient because I require little markup to use effectively.</p>
+            <span class="card-title">Daily Temperature Highs and Lows</span>
+            <canvas id="line-chart" width="100%" height="50%"></canvas>
           </div>
         </div>
       </div> <!-- end of first card -->
@@ -90,9 +95,8 @@
       <div class="col s12 m6">
         <div class="card">
           <div class="card-content">
-            <span class="card-title">Pie Chart</span>
-            <p>I am a very simple card. I am good at containing small bits of information.
-            I am convenient because I require little markup to use effectively.</p>
+            <span class="card-title">Wind Speed</span>
+            <canvas id="bar-chart" width="100%" height="50%"></canvas>
           </div>
         </div>
       </div> <!-- end of second card -->
@@ -128,7 +132,9 @@
           var gHandle = document.getElementById('weather');
           var myHTML = "<p>Today's weather is " + w.weather+'</p>';
           myHTML = myHTML + "<div id = 'wicon'><i class='wi wi-night-sleet'></i>  " + w.temp2m.max +"°C</div>";
-          gHandle.innerHTML = myHTML
+          gHandle.innerHTML = myHTML;
+          lineGraph(response.data.dataseries);
+          barChart(response.data.dataseries);
         })
     }
     function mapIt(lat, lon, city, country){
@@ -142,6 +148,72 @@
           .bindPopup('<h6>'+city+'</h6><p>City in '+country+' with latitude: '+lat+' and longitude: '+lon+'</p>')
           .openPopup();
     }
+
+    function barChart(wdata){
+      var labs = [];
+      var winds = [];
+      for (i=0; i<wdata.length;i++){
+        labs.push(wdata[i].date);
+        winds.push(wdata[i].wind10m_max);
+      }
+      new Chart(document.getElementById("bar-chart"), {
+          type: 'bar',
+          data: {
+            labels: labs,
+            datasets: [
+              {
+                label: "Wind Speed",
+                backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                data: winds
+              }
+            ]
+          },
+          options: {
+            legend: { display: false },
+            title: {
+              display: false,
+              text: ''
+            }
+          }
+      });
+    }
+
+    function lineGraph(wdata) {
+      var labs = [];
+      var highs = [];
+      var lows = [];
+      for (i=0; i<wdata.length;i++){
+        labs.push(wdata[i].date);
+        highs.push(wdata[i].temp2m.max);
+        lows.push(wdata[i].temp2m.min);
+      }
+
+      new Chart(document.getElementById("line-chart"), {
+        type: 'line',
+        data: {
+          labels: labs,
+          datasets: [{
+              data: highs,
+              label: "Highs",
+              borderColor: "#ff3333",
+              fill: false
+            }, {
+              data: lows,
+              label: "Lows",
+              borderColor: "#333fff",
+              fill: false
+            }
+          ]
+        },
+        options: {
+          title: {
+            display: false,
+            text: ''
+          }
+        }
+      });
+    }
+
 
   </script>
 
